@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerji Mekanizması - Naci Karhan Testi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .correct-anim { animation: pulseGreen 0.5s ease-in-out; }
+        .wrong-anim { animation: shake 0.5s ease-in-out; }
+        @keyframes pulseGreen { 0% { background-color: white; } 50% { background-color: #d1fae5; } 100% { background-color: white; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <!-- Header -->
+    <header class="w-full max-w-2xl text-center mb-6">
+        <h1 class="text-3xl font-bold text-blue-800">Alerji Mekanizması 🧬</h1>
+        <p class="text-blue-600 font-semibold">"Biyoloji ezber değil, mekanizmadır."</p>
+    </header>
+
+    <!-- App Container -->
+    <main class="w-full max-w-2xl glass rounded-2xl shadow-xl overflow-hidden relative min-h-[500px] flex flex-col">
+        
+        <!-- Giriş Bölümü -->
+        <section id="section-intro" class="p-8 flex flex-col items-center text-center space-y-6">
+            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-4xl">🦠</div>
+            <h2 class="text-2xl font-bold">Hoş Geldin Genç Arkadaşım!</h2>
+            <p class="text-gray-600">Bugün vücudumuzun "yanlış alarm" senaryosu olan alerjiyi 25 soruda eleyeceğiz. AYT derinliğinde bir check-up'a hazır mısın?</p>
+            <div class="w-full space-y-2 text-left bg-gray-50 p-4 rounded-lg text-sm">
+                <p>✅ <b>Müfredat:</b> 2024 MEB Güncel</p>
+                <p>✅ <b>Soru & Şıklar:</b> 25 Soru, Her Denemede Karışık</p>
+                <p>✅ <b>Seviye:</b> AYT / 11. Sınıf</p>
+            </div>
+            <button onclick="showSection('discover')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg transform hover:scale-105">
+                KEŞFET & BAŞLA
+            </button>
+        </section>
+
+        <!-- Keşfet Bölümü -->
+        <section id="section-discover" class="hidden p-8 space-y-6">
+            <h2 class="text-2xl font-bold text-blue-800 border-b pb-2">Hızlı Hatırlatma 🔬</h2>
+            <div class="space-y-4 text-gray-700 leading-relaxed overflow-y-auto max-h-[400px] pr-2 text-sm">
+                <p><b>1. Duyarlılaşma:</b> Alerjen ilk kez girer, B lenfositler <b>IgE</b> üretir, bu antikorlar <b>Mast hücrelerine</b> yapışır.</p>
+                <p><b>2. Reaksiyon:</b> Aynı alerjen tekrar girdiğinde Mast üzerindeki IgE'ye bağlanır. Mast hücresi patlar ve <b>HİSTAMİN</b> salgılanır.</p>
+                <p><b>3. Sonuç:</b> Histamin damarları genişletir, geçirgenliği artırır, doku sıvısı artar (ÖDEM), tansiyon düşer.</p>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 italic text-xs">
+                    Unutma! Alerjide doku sıvısı azalmaz, ARTAR.
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button onclick="startQuiz()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg transform hover:scale-105">
+                    TESTİ BAŞLAT
+                </button>
+                <button onclick="showSection('intro')" class="w-full text-gray-500 font-semibold py-2 text-sm">Geri Dön</button>
+            </div>
+        </section>
+
+        <!-- Quiz Bölümü -->
+        <section id="section-quiz" class="hidden flex-1 flex flex-col">
+            <!-- Stats Bar -->
+            <div class="bg-blue-50 p-3 flex justify-between items-center border-b">
+                <button onclick="confirmExit()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-lg font-bold transition-all">🏠 Menüye Dön</button>
+                <div class="font-mono font-bold text-blue-700 text-sm" id="timer">00:00</div>
+                <div class="font-semibold text-gray-600 text-sm" id="progress-text">1/25</div>
+            </div>
+            <!-- Question Content -->
+            <div class="p-6 flex-1 overflow-y-auto">
+                <div id="question-text" class="text-lg font-semibold text-gray-800 mb-6">Soru metni...</div>
+                <div id="options-container" class="space-y-3">
+                    <!-- Butonlar JS ile gelecek -->
+                </div>
+            </div>
+            <!-- Feedback Overlay -->
+            <div id="feedback" class="hidden absolute inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center p-8 text-center z-20">
+                <div id="feedback-icon" class="text-6xl mb-4"></div>
+                <div id="feedback-title" class="text-2xl font-bold mb-2"></div>
+                <div id="feedback-desc" class="text-gray-600 mb-6 text-sm"></div>
+                <button onclick="nextQuestion()" class="bg-blue-600 text-white px-8 py-2 rounded-full font-bold shadow-md hover:bg-blue-700 transition-all">SIRADAKİ SORU</button>
+            </div>
+        </section>
+
+        <!-- Sonuç Bölümü -->
+        <section id="section-result" class="hidden p-8 flex flex-col items-center text-center">
+            <h2 class="text-3xl font-bold text-blue-800 mb-4 text-shadow">Sınav Karnesi 📊</h2>
+            <div id="badge-container" class="w-full py-6 mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-inner">
+                <div id="result-emoji" class="text-6xl mb-2">🏆</div>
+                <h3 id="result-title" class="text-xl font-bold">BAĞIŞIKLIK MUHAFIZI</h3>
+                <p class="text-sm opacity-80">AYT Biyoloji - Alerji Mekanizması</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 w-full mb-8">
+                <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                    <span class="block text-gray-500 text-xs uppercase">Doğru</span>
+                    <span id="res-correct" class="text-2xl font-bold text-green-600">0</span>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+                    <span class="block text-gray-500 text-xs uppercase">Yanlış</span>
+                    <span id="res-wrong" class="text-2xl font-bold text-red-600">0</span>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 col-span-2">
+                    <span class="block text-gray-500 text-xs uppercase">Başarı Yüzdesi</span>
+                    <span id="res-percent" class="text-2xl font-bold text-blue-600">%0</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col w-full gap-3">
+                <button onclick="startQuiz()" class="bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg">TEKRAR DENE</button>
+                <button onclick="showSection('intro')" class="text-blue-600 font-semibold py-2">ANA MENÜYE DÖN</button>
+                <p class="text-[10px] text-gray-400 mt-4 italic">Ekran görüntüsü alıp #NaciKarhan etiketiyle paylaşabilirsin!</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-auto bg-gray-100 p-2 text-center text-xs text-gray-500 border-t font-semibold">
+            Tasarım: Naci Karhan
+        </footer>
+    </main>
+
+    <script>
+        const originalQuestions = [
+            { q: "Vücuda giren aslında zararsız olan maddelere karşı verilen aşırı yangısal tepkiye ne denir?", a: ["Enfeksiyon", "Alerji", "Otoimmünite", "Fagositoz", "Kemotaksis"], c: 1, e: "Alerji, zararsız bir maddeyi (alerjen) düşman sanma durumudur." },
+            { q: "Alerjik reaksiyonların temelini oluşturan ve Mast hücrelerine bağlanan antikor sınıfı hangisidir?", a: ["IgG", "IgA", "IgM", "IgE", "IgD"], c: 3, e: "IgE sınıfı antikorlar alerji mekanizmasının ana mühimmatıdır." },
+            { q: "Histamin salgılayarak alerjik belirtileri başlatan bağ doku hücresi hangisidir?", a: ["Makrofaj", "Fibroblast", "Mast Hücresi", "Plazma Hücresi", "Melanosit"], c: 2, e: "Mast hücreleri içindeki histamin granüllerini boşaltarak tepkiyi başlatır." },
+            { q: "Duyarlılaşma (1. Karşılaşma) aşamasında hangisi gerçekleşmez?", a: ["Alerjen girişi", "B lenfosit uyarılması", "IgE üretimi", "Histamin patlaması", "IgE'nin Mast hücresine bağlanması"], c: 3, e: "Histamin patlaması asıl belirtilerin görüldüğü 2. karşılaşmada olur." },
+            { q: "Histamin salgısı sonucu kılcal damarlarda görülen değişim hangisidir?", a: ["Geçirgenlik artar", "Büzülme olur", "Geçirgenlik azalır", "Kan akışı durur", "Hücre sayısı azalır"], c: 0, e: "Histamin damar geçirgenliğini artırarak dokuya sıvı geçişini sağlar." },
+            { q: "Alerjik reaksiyon sırasında doku sıvısı miktarının artmasına ne ad verilir?", a: ["Anemi", "Ödem", "Diyaliz", "Plazmoliz", "Hemoliz"], c: 1, e: "Kandan dokuya sızan sıvı doku şişmesine (ödem) yol açar." },
+            { q: "Alerji ile otoimmün hastalık arasındaki temel fark nedir?", a: ["Alerji kalıtsaldır", "Otoimmünite dış etkendir", "Hedef: Dış zararsız madde (Alerji) vs Kendi Hücresi (Otoimmünite)", "Alerji daha tehlikelidir", "İkisi aynı şeydir"], c: 2, e: "Alerjide 'dostu düşman sanmak', otoimmünitede 'kendine saldırmak' vardır." },
+            { q: "Aşağıdakilerden hangisi bir otoimmün hastalık örneğidir?", a: ["Saman Nezlesi", "Arı Sokması", "Fıstık Alerjisi", "Çölyak", "Astım"], c: 3, e: "Çölyak, MS ve Romatoid Artrit bağışıklık sisteminin kendi dokusuna saldırdığı hastalıklardır." },
+            { q: "Histamin damarları genişlettiği (vazodilatasyon) için kan basıncında ne beklenir?", a: ["Aniden yükselir", "Değişmez", "Aniden düşebilir", "Önce artar sonra azalır", "Nabız durur"], c: 2, e: "Damarların genişlemesi toplam damar hacmini artırır ve tansiyonu düşürür." },
+            { q: "Solunum yollarındaki düz kasların histamin etkisiyle kasılması neye yol açar?", a: ["Derin nefes alma", "Nefes darlığı", "Ses tellerinin gelişimi", "Yutkunma zorluğu", "Ateş yükselmesi"], c: 1, e: "Hava yollarının daralması astım benzeri nefes darlığı oluşturur." },
+            { q: "Alerji belirtilerini durdurmak için kullanılan ilaçların genel adı nedir?", a: ["Antibiyotik", "Antihistaminik", "Antijen", "Analjezik", "Antipiretik"], c: 1, e: "Antihistaminikler hücrelerdeki histamin reseptörlerini bloke ederek sinyal iletimini durdurur." },
+            { q: "Alerjen vücuda girdiğinde durumu yanlış yorumlayıp B lenfositleri uyaran 'Gözcü' hücre hangisidir?", a: ["B Lenfosit", "T Lenfosit", "Eritrosit", "Trombosit", "Osteosit"], c: 1, e: "Yardımcı T hücreleri antijeni tanıyıp B hücrelerini antikor üretimine zorlar." },
+            { q: "Aşağıdakilerden hangisi bir 'alerjen' olabilir?", a: ["Patojen Virüs", "Polen", "Zehirli Bakteri", "Kendi Hücremiz", "Glikoz"], c: 1, e: "Alerjenler (polen, fıstık vb.) aslında patojen olmayan ama tepki doğuran maddelerdir." },
+            { q: "Salgı bezlerinin histaminle uyarılması sonucu hangi durum görülür?", a: ["Deride kuruma", "Mukus artışı", "Göz yaşı azalması", "Tükürük kesilmesi", "Saç dökülmesi"], c: 1, e: "Burun akıntısı ve balgam gibi mukus artışları bu mekanizmayla olur." },
+            { q: "İkinci karşılaşmada (Tetik Çekilmesi) alerjen nereye bağlanır?", a: ["Hücre çekirdeğine", "Serbest antikorlara", "Mast hücresi üzerindeki hazır IgE'ye", "Alveollere", "Kemik iliğine"], c: 2, e: "Mekanizma hazır bekleyen (kurulmuş bomba) Mast hücresinde tetiklenir." },
+            { q: "Alerjik reaksiyonun gelişme sırası hangisinde doğrudur?", a: ["Tetiklenme > Duyarlılaşma > Histamin", "Duyarlılaşma > Tetiklenme > Histamin", "Histamin > Duyarlılaşma > Tetiklenme", "Tetiklenme > Histamin > Duyarlılaşma", "Histamin > Tetiklenme > Duyarlılaşma"], c: 1, e: "Önce hazırlık (Duyarlılaşma), sonra temas (Tetiklenme), sonra sonuç (Histamin)." },
+            { q: "Aşağıdakilerden hangisi alerjinin kazanılmış bağışıklık bozukluğu olduğunu kanıtlar?", a: ["Doğuştan olması", "Fagositoz yapılması", "Özgül IgE antikorlarının üretilmesi", "Ateşin çıkması", "Derinin fiziksel engel olması"], c: 2, e: "Spesifik antikor üretimi (IgE) kazanılmış (özgül) bağışıklıkla ilgilidir." },
+            { q: "Kılcal damar geçirgenliği arttığında doku sıvısına geçişi hızlanan yapı hangisidir?", a: ["Alyuvarlar", "Kan Plazması (Sıvı kısım)", "Sinir Hücreleri", "Kemik Hücreleri", "Oksijen molekülleri"], c: 1, e: "Damardan sızan plazma doku aralığında birikerek ödemi oluşturur." },
+            { q: "Alerjik şok (Anafilaksi) durumunda acil müdahalenin temel sebebi nedir?", a: ["Kaşıntıyı durdurmak", "Kan basıncının aşırı düşmesini engellemek", "Ateşi düşürmek", "Yarayı temizlemek", "Ağrıyı kesmek"], c: 1, e: "Aniden düşen tansiyon hayati risk (şok) oluşturur." },
+            { q: "B lenfositler uyarıldığında antikor üretmek için hangi hücreye dönüşür?", a: ["Hafıza hücresi", "Plazma hücresi", "Kök hücre", "Destek hücresi", "Sinir hücresi"], c: 1, e: "Plazma hücreleri vücudun 'antikor fabrikaları'dır." },
+            { q: "Mast hücreleri bağ dokunun dışında hangi koruma sisteminde de yer alır?", a: ["Fiziksel engeller", "İç savunma hattı (Yangısal tepki)", "Doğal bağışıklık", "Aktif taşıma", "Pasif bağışıklık"], c: 1, e: "Mast hücreleri ve histamin yangısal tepkinin (İltihaplanma) de ana aktörüdür." },
+            { q: "Alerjik reaksiyonlarda görülen 'kızarıklık' ve 'sıcaklık artışının' sebebi nedir?", a: ["Hücre ölümü", "Damarların genişleyip bölgeye kan akışının artması", "Su kaybı", "Mikrop üremesi", "Vitamin eksikliği"], c: 1, e: "Genişleyen damarlardan geçen fazla kan bölgeyi kızartır ve ısıtır." },
+            { q: "Neden ilk karşılaşmada alerji belirtisi görülmez?", a: ["Alerjen zayıftır", "Vücut yorgundur", "Antikorlar henüz Mast hücrelerine yerleşme aşamasındadır", "Alerjen hemen ölür", "T lenfositler uyumaktadır"], c: 2, e: "İlk karşılaşma 'duyarlılaşma' yani hazırlık evresidir, patlama 2. karşılaşmada olur." },
+            { q: "Alerjik astım durumunda hangi sistem doğrudan etkilenir?", a: ["Sindirim", "Boşaltım", "Solunum", "Üreme", "İskelet"], c: 2, e: "Bronşlardaki daralma solunum sistemini kilitler." },
+            { q: "Biyolojide alerji mekanizması için en doğru ifade hangisidir?", a: ["Vücudun dışarıya kapılarını kapatması", "Bağışıklık sisteminin 'Yanlış Alarm' vermesi", "Hücrelerin kendi kendini sindirmesi", "Genetik mutasyonun sonucu", "Bakteri saldırısı"], c: 1, e: "Alerji, zararsız bir şeye karşı gereksiz yere savaş açılmasıdır." }
+        ];
+
+        let questions = [];
+        let currentIdx = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let timerSeconds = 0;
+        let timerInterval;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section-' + id).classList.remove('hidden');
+            if(id === 'intro' || id === 'discover') {
+                clearInterval(timerInterval);
+                timerSeconds = 0;
+            }
+        }
+
+        function confirmExit() {
+            if(confirm("Sınavdan çıkmak ve ana menüye dönmek istediğine emin misin? İlerlemen kaybolacak.")) {
+                showSection('intro');
+            }
+        }
+
+        function startQuiz() {
+            // Soruları kopyala, seçenekleri karıştır ve sonra soru sırasını karıştır
+            questions = originalQuestions.map(q => {
+                let optionsWithIndex = q.a.map((text, idx) => ({ text, isCorrect: idx === q.c }));
+                shuffle(optionsWithIndex);
+                return {
+                    q: q.q,
+                    a: optionsWithIndex.map(o => o.text),
+                    c: optionsWithIndex.findIndex(o => o.isCorrect),
+                    e: q.e
+                };
+            });
+            shuffle(questions);
+            
+            currentIdx = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            timerSeconds = 0;
+            
+            showSection('quiz');
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('progress-text').innerText = `${currentIdx + 1}/${questions.length}`;
+            document.getElementById('question-text').innerText = q.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border-2 border-gray-100 hover:border-blue-400 hover:bg-blue-50 transition-all font-medium flex items-center text-sm sm:text-base";
+                btn.innerHTML = `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mr-3 shrink-0 font-bold">${String.fromCharCode(65+i)}</span> ${opt}`;
+                btn.onclick = () => checkAnswer(i);
+                container.appendChild(btn);
+            });
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function checkAnswer(selectedIdx) {
+            const q = questions[currentIdx];
+            const isCorrect = selectedIdx === q.c;
+            
+            if(isCorrect) {
+                correctCount++;
+                showFeedback("🔔 TEBRİKLER!", "Doğru Cevap!", q.e, "✅");
+            } else {
+                wrongCount++;
+                showFeedback("❌ DİKKAT!", `Yanlış Cevap! (Doğru: ${String.fromCharCode(65+q.c)})`, q.e, "⚠️");
+            }
+        }
+
+        function showFeedback(title, desc, explanation, icon) {
+            document.getElementById('feedback-title').innerText = title;
+            document.getElementById('feedback-desc').innerHTML = `<b>${desc}</b><br><br>${explanation}`;
+            document.getElementById('feedback-icon').innerText = icon;
+            document.getElementById('feedback').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if(currentIdx < questions.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            showSection('result');
+            const percent = Math.round((correctCount / questions.length) * 100);
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-wrong').innerText = wrongCount;
+            document.getElementById('res-percent').innerText = `%${percent}`;
+            
+            let badge = "BAĞIŞIKLIK MUHAFIZI";
+            let emoji = "🏆";
+            if(percent < 50) { badge = "ÇALIŞKAN ÖĞRENCİ"; emoji = "📚"; }
+            else if(percent < 85) { badge = "MOLEKÜLER ANALİST"; emoji = "🔬"; }
+            
+            document.getElementById('result-title').innerText = badge;
+            document.getElementById('result-emoji').innerText = emoji;
+        }
+    </script>
+</body>
+</html>
